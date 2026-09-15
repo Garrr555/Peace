@@ -3,7 +3,7 @@ import PublicLayout from "./layouts/publicLayout";
 import HomeView from "./pages/homeView";
 import EventView from "./pages/eventView";
 import LoginView from "./pages/loginView";
-import RegisterView from "./pages/registerView";
+// import RegisterView from "./pages/registerView";
 import DashboardView from "./pages/dashboardView";
 import DasboardLayout from "./layouts/dashboardLayout";
 import DetailPage from "./pages/detailPage";
