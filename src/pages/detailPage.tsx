@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
-import { Calendar, DollarSign, MapPin, UserIcon } from "lucide-react";
+import { Calendar, MapPin, UserIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
 
