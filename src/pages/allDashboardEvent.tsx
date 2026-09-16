@@ -3,7 +3,13 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
 import { Link, useSearchParams } from "react-router";
-import { Search, Pencil, TrashIcon, MoreVerticalIcon } from "lucide-react";
+import {
+  Search,
+  Pencil,
+  TrashIcon,
+  MoreVerticalIcon,
+  DownloadIcon,
+} from "lucide-react";
 import formatDateTime from "../hooks/time";
 import useDebounce from "../hooks/debounce";
 import Pagination from "../components/pagination";
@@ -81,6 +87,29 @@ export default function AllDashboardEvent() {
     }
   };
 
+const handleDownloadEvent = async (id: number) => {
+  try {
+    const response = await CustomFetch.get(`/event/${id}/download`, {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(response.data);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `event-${id}.png`;
+
+    document.body.appendChild(link);
+    link.click();
+
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.log(error);
+    toast.error("Gagal mendownload gambar event");
+  }
+};
+
   useEffect(() => {
     setSearchParams({
       page: "1",
@@ -141,9 +170,18 @@ export default function AllDashboardEvent() {
             <MoreVerticalIcon />
           </Link>
 
+          <button
+            onClick={() => handleDownloadEvent(item.ID)}
+            className="cursor-pointer rounded bg-green-600 px-3 py-2 text-white"
+          >
+            <DownloadIcon />
+          </button>
+
           <Link
             to={`/dashboard/event/edit/${item.ID}`}
-            className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
+            className={`cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white ${
+              user?.role === "admin" ? "" : "hidden"
+            }`}
           >
             <Pencil />
           </Link>
@@ -151,11 +189,9 @@ export default function AllDashboardEvent() {
           <button
             onClick={() => handleDeleteEvent(item.ID)}
             type="button"
-            disabled={user?.role !== "admin" && item.user.ID !== user?.id}
+            disabled={user?.role !== "admin"}
             className={`rounded px-3 py-2 text-white ${
-              user?.role === "admin" || item.user.ID === user?.id
-                ? "bg-red-600 cursor-pointer"
-                : "bg-slate-500 disabled"
+              user?.role === "admin" ? "bg-red-600 cursor-pointer" : "hidden"
             }`}
           >
             <TrashIcon />

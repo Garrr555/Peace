@@ -6,6 +6,7 @@ import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
 import { Calendar, DollarSign, MapPin, UserIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
+import { toast } from "react-toastify";
 
 function DetailPage() {
   const { id } = useParams();
@@ -27,6 +28,29 @@ function DetailPage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadEvent = async (id: number) => {
+    try {
+      const response = await CustomFetch.get(`/event/${id}/download`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `event-${id}.png`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      toast.error("Gagal mendownload gambar event");
     }
   };
 
@@ -98,12 +122,17 @@ function DetailPage() {
             <UserIcon />
             Posted by {eventData.user.name}
           </p>
-          <div className="mt-6 leading-8 text-start">{eventData.description}</div>
+          <div className="mt-6 leading-8 text-start">
+            {eventData.description}
+          </div>
           <p className="text-xs mt-6 text-zinc-500 text-start">
             {formatDateTime(eventData.CreatedAt)}
           </p>
-          <button className="mt-8 rounded w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700">
-            Booking Event
+          <button
+            onClick={() => handleDownloadEvent(eventData.ID)}
+            className="mt-8 rounded w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
+          >
+            Download Gambar
           </button>
         </div>
       )}
