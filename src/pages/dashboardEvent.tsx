@@ -6,6 +6,8 @@ import { Link } from "react-router";
 import { Pencil, PlusCircle, TrashIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
+import type { TableColumn } from "../components/dataTable";
+import DataTable from "../components/dataTable";
 
 const DashboardEvent = () => {
   const [events, setEvents] = useState<EventType[]>([]);
@@ -34,6 +36,68 @@ const DashboardEvent = () => {
   useEffect(() => {
     getEventByUser();
   }, []);
+
+  const columns: TableColumn<EventType>[] = [
+    {
+      header: "Image",
+      className: "text-center",
+      render: (item) => (
+        <div className="flex justify-center">
+          <img
+            src={item.image}
+            alt={item.name}
+            className="h-16 w-24 rounded-lg object-cover"
+          />
+        </div>
+      ),
+    },
+    {
+      header: "Event",
+      className: "text-left",
+      render: (item) => (
+        <div>
+          <p className="font-semibold">{item.name}</p>
+
+          <p className="line-clamp-2 text-sm text-gray-500">
+            {item.description.substring(0, 30)} ...
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: "Location",
+      className: "text-center",
+      render: (item) => item.location,
+    },
+    {
+      header: "Date",
+      className: "text-center",
+      render: (item) => formatDateTime(item.datetime),
+    },
+    {
+      header: "Action",
+      className: "text-center",
+      render: (item) => (
+        <div className="flex justify-center gap-2">
+          <Link
+            to={`/dashboard/event/edit/${item.ID}`}
+            className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
+          >
+            <Pencil />
+          </Link>
+
+          <button
+            onClick={() => handleDeleteEvent(item.ID)}
+            type="button"
+            className="cursor-pointer rounded bg-red-600 px-3 py-2 text-white"
+          >
+            <TrashIcon />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
@@ -57,7 +121,7 @@ const DashboardEvent = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto mt-5 rounded-xl shadow-xl">
+      {/* <div className="overflow-x-auto mt-5 rounded-xl shadow-xl">
         <table className="min-w-full">
           <thead className="bg-slate-200">
             <tr>
@@ -89,7 +153,9 @@ const DashboardEvent = () => {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-center">{item.location}</td>
-                <td className="px-4 py-3 text-center">{formatDateTime(item.datetime)}</td>
+                <td className="px-4 py-3 text-center">
+                  {formatDateTime(item.datetime)}
+                </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-center gap-2">
                     <Link
@@ -111,7 +177,12 @@ const DashboardEvent = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </div> */}
+      <DataTable
+        data={events}
+        columns={columns}
+        getRowKey={(item) => item.ID}
+      />
     </>
   );
 };

@@ -3,12 +3,13 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
 import { Link, useSearchParams } from "react-router";
-import { Search, Pencil, CircleEllipsis, TrashIcon } from "lucide-react";
+import { Search, Pencil, TrashIcon, MoreVerticalIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import useDebounce from "../hooks/debounce";
 import Pagination from "../components/pagination";
 import { toast } from "react-toastify";
 import { useAuthStore } from "../store/auth.store";
+import DataTable, { type TableColumn } from "../components/dataTable";
 
 export default function AllDashboardEvent() {
   const [events, setEvents] = useState<EventType[]>([]);
@@ -16,6 +17,7 @@ export default function AllDashboardEvent() {
   const [totalEvent, setTotalEvent] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuthStore();
+  console.log(user);
 
   const search = searchParams.get("search") || "";
   const page = Number(searchParams.get("page") || "1");
@@ -90,6 +92,79 @@ export default function AllDashboardEvent() {
     getEventsData();
   }, [page, search, limit]);
 
+  const columns: TableColumn<EventType>[] = [
+    {
+      header: "Image",
+      className: "text-center",
+      render: (item) => (
+        <div className="flex justify-center">
+          <img
+            src={item.image}
+            alt={item.name}
+            className="h-16 w-24 rounded-lg object-cover"
+          />
+        </div>
+      ),
+    },
+    {
+      header: "Event",
+      className: "text-left",
+      render: (item) => (
+        <div>
+          <p className="font-semibold">{item.name}</p>
+
+          <p className="line-clamp-2 text-sm text-gray-500">
+            {item.description.substring(0, 30)} ...
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: "Location",
+      className: "text-center",
+      render: (item) => item.location,
+    },
+    {
+      header: "Date",
+      className: "text-center",
+      render: (item) => formatDateTime(item.datetime),
+    },
+    {
+      header: "Action",
+      className: "text-center",
+      render: (item) => (
+        <div className="flex justify-center gap-2">
+          <Link
+            to={`/event/${item.ID}`}
+            className="cursor-pointer rounded bg-indigo-600 px-3 py-2 text-white"
+          >
+            <MoreVerticalIcon />
+          </Link>
+
+          <Link
+            to={`/dashboard/event/edit/${item.ID}`}
+            className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
+          >
+            <Pencil />
+          </Link>
+
+          <button
+            onClick={() => handleDeleteEvent(item.ID)}
+            type="button"
+            disabled={user?.role !== "admin" && item.user.ID !== user?.id}
+            className={`rounded px-3 py-2 text-white ${
+              user?.role === "admin" || item.user.ID === user?.id
+                ? "bg-red-600 cursor-pointer"
+                : "bg-slate-500 disabled"
+            }`}
+          >
+            <TrashIcon />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       {/* Header */}
@@ -120,80 +195,14 @@ export default function AllDashboardEvent() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto mt-5 rounded-xl shadow-xl">
-        <table className="min-w-full">
-          <thead className="bg-slate-200">
-            <tr>
-              <th className="px-4 py-3 text-center">No</th>
-              <th className="px-4 py-3 text-center">Image</th>
-              <th className="px-4 py-3 text-left">Event</th>
-              <th className="px-4 py-3 text-center">Location</th>
-              <th className="px-4 py-3 text-center">Date</th>
-              <th className="px-4 py-3 text-center">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {events.map((item, i) => (
-              <tr key={item.ID} className="border-b hover:bg-slate-100">
-                <td className="px-4 py-3 text-center">
-                  {(page - 1) * limit + i + 1}
-                </td>
-
-                <td className="px-4 py-3 flex justify-center">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-16 w-24 rounded-lg object-cover"
-                  />
-                </td>
-
-                <td className="px-4 py-3">
-                  <div>
-                    <p className="font-semibold">{item.name}</p>
-
-                    <p className="line-clamp-2 text-sm text-gray-500">
-                      {item.description.substring(0, 30)} ...
-                    </p>
-                  </div>
-                </td>
-
-                <td className="px-4 py-3 text-center">{item.location}</td>
-
-                <td className="px-4 py-3 text-center">
-                  {formatDateTime(item.datetime)}
-                </td>
-
-                <td className="px-4 py-3">
-                  <div className="flex justify-center gap-2">
-                    <Link
-                      to={`/event/${item.ID}`}
-                      className="cursor-pointer rounded bg-indigo-600 px-3 py-2 text-white"
-                    >
-                      <CircleEllipsis />
-                    </Link>
-
-                    <Link
-                      to={`/dashboard/event/edit/${item.ID}`}
-                      className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
-                    >
-                      <Pencil />
-                    </Link>
-                    <button
-                      onClick={() => handleDeleteEvent(item.ID)}
-                      disabled={item.user.ID !== user?.id}
-                      type="button"
-                      className={`rounded px-3 py-2 text-white ${item.user.ID !== user?.id ? "bg-slate-500 disabled" : "bg-red-600 cursor-pointer"}`}
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        data={events}
+        columns={columns}
+        getRowKey={(item) => item.ID}
+        page={page}
+        limit={limit}
+        maxHeight="66vh"
+      />
 
       {/* Pagination */}
       <div className="my-10 flex justify-between items-center gap-4">
