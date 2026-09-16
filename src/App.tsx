@@ -16,6 +16,7 @@ import AllDashboardEvent from "./pages/allDashboardEvent";
 import DashboardUsers from "./pages/dashboardUsers";
 import AdminRoute from "./guard/AdminRoute";
 import DetailUserPage from "./pages/detailUserPage";
+import DashboardSaveEvent from "./pages/dashboardSaveEvent";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
             </Route>
             <Route path="event" element={<DashboardEvent />} />
             <Route path="all" element={<AllDashboardEvent />} />
+            <Route path="save" element={<DashboardSaveEvent />} />
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="event/edit/:id" element={<UpdateEvent />} />
           </Route>

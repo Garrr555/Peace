@@ -23,6 +23,10 @@ const menus = [
     name: "All Event",
     path: "/dashboard/all",
   },
+  {
+    name: "Save Event",
+    path: "/dashboard/save",
+  },
 ];
 
 function SideBarDashboard({ isOpen }: SidebarProps) {

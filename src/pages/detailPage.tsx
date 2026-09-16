@@ -54,6 +54,21 @@ function DetailPage() {
     }
   };
 
+  const saveEvent = async (id: number) => {
+    try {
+      const response = await CustomFetch.post("/booking", {
+        phone: "1234567890",
+        eventId: id,
+      });
+
+      console.log(response.data);
+      toast.success("Gambar berhasil disimpan");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Gagal menyimpan gambar");
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchDetailEvent();
@@ -97,43 +112,46 @@ function DetailPage() {
   }
 
   return (
-    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8">
+    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-center items-center">
       {eventData && (
-        <div className="mx-auto max-w-5xl p-6">
+        <div className="mx-auto max-w-5xl p-6 bg-slate-50">
           <img
             src={eventData.image}
             className="w-full h-96 object-contain"
             alt={eventData.name}
           />
           <h1 className="mt-6 text-4xl font-bold">{eventData.name}</h1>
-          <p className="mt-4 text-gray-500 flex gap-x-2">
-            <MapPin />
-            {eventData.location}
-          </p>
-          <p className="mt-4 text-gray-500 flex gap-x-2">
-            <Calendar />
-            {formatDateTime(eventData.datetime)}
-          </p>
-          <p className="mt-4 text-gray-500 flex gap-x-2">
-            <DollarSign />
-            free
-          </p>
-          <p className="mt-4 text-gray-500 flex gap-x-2">
-            <UserIcon />
-            Posted by {eventData.user.name}
-          </p>
-          <div className="mt-6 leading-8 text-start">
+          <div className="mt-6 leading-8 text-start bg-slate-100 px-5 py-3 rounded-3xl min-h-40">
             {eventData.description}
           </div>
-          <p className="text-xs mt-6 text-zinc-500 text-start">
-            {formatDateTime(eventData.CreatedAt)}
-          </p>
-          <button
-            onClick={() => handleDownloadEvent(eventData.ID)}
-            className="mt-8 rounded w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
-          >
-            Download Gambar
-          </button>
+          <div className="flex justify-between items-center">
+            <p className="mt-4 text-gray-500 flex gap-x-2">
+              <MapPin />
+              {eventData.location}
+            </p>
+            <p className="mt-4 text-gray-500 flex gap-x-2">
+              <Calendar />
+              {formatDateTime(eventData.CreatedAt)}
+            </p>
+            <p className="mt-4 text-gray-500 flex gap-x-2">
+              <UserIcon />
+              Posted by {eventData.user.name}
+            </p>
+          </div>
+          <div className="flex justify-between items-center w-full gap-5">
+            <button
+              onClick={() => saveEvent(eventData.ID)}
+              className="mt-8 rounded-3xl w-full cursor-pointer bg-green-500 px-6 py-3 text-white hover:bg-blue-700"
+            >
+              Simpan Gambar
+            </button>
+            <button
+              onClick={() => handleDownloadEvent(eventData.ID)}
+              className="mt-8 rounded-3xl w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
+            >
+              Download Gambar
+            </button>
+          </div>
         </div>
       )}
     </section>

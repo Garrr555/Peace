@@ -1,37 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import CustomFetch from "../config/db";
-import type { EventType } from "../types/type";
+import type { BookingType } from "../types/type";
 import { Link } from "react-router";
-import { LayoutGrid, Pencil, PlusCircle, Table, TrashIcon } from "lucide-react";
+import {
+  LayoutGrid,
+  MoreVerticalIcon,
+  PlusCircle,
+  Table,
+  TrashIcon,
+} from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
 import type { TableColumn } from "../components/dataTable";
 import DataTable from "../components/dataTable";
 import DataCard from "../components/dataCard";
 
-const DashboardEvent = () => {
-  const [events, setEvents] = useState<EventType[]>([]);
+const DashboardSaveEvent = () => {
+  const [events, setEvents] = useState<BookingType[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
 
   const getEventByUser = async () => {
-    const response = await CustomFetch.get("/events/user");
-    console.log(response);
-    setEvents(response.data.events);
+    const response = await CustomFetch.get("/booking/user");
+    setEvents(response.data.booking);
   };
 
   const handleDeleteEvent = async (id: number) => {
     try {
-      const confirm = window.confirm("Yakin ingin dihapus?");
-      if (confirm) {
-        await CustomFetch.delete(`/events/${id}`);
-        toast.success("Berhasil Menghapus Event");
-        getEventByUser();
-      }
-      return;
-    } catch (error) {
+      const response = await CustomFetch.delete(`/booking/${id}`);
+
+      console.log(response.data);
+      toast.success("Unsave");
+      getEventByUser();
+    } catch (error: any) {
       console.log(error);
-      toast.error("Gagal Menghapus Event");
+      toast.error(error?.response?.data?.message || "Gagal Unsave");
     }
   };
 
@@ -39,15 +43,15 @@ const DashboardEvent = () => {
     getEventByUser();
   }, []);
 
-  const columns: TableColumn<EventType>[] = [
+  const columns: TableColumn<BookingType>[] = [
     {
       header: "Image",
       className: "text-center",
       render: (item) => (
         <div className="flex justify-center">
           <img
-            src={item.image}
-            alt={item.name}
+            src={item?.event?.image}
+            alt={item?.event?.name}
             className="h-16 w-24 rounded-lg object-cover"
           />
         </div>
@@ -58,10 +62,10 @@ const DashboardEvent = () => {
       className: "text-left",
       render: (item) => (
         <div>
-          <p className="font-semibold">{item.name}</p>
+          <p className="font-semibold">{item?.event?.name}</p>
 
           <p className="line-clamp-2 text-sm text-gray-500">
-            {item.description.substring(0, 30)} ...
+            {item.event.description.substring(0, 30)} ...
           </p>
         </div>
       ),
@@ -69,12 +73,17 @@ const DashboardEvent = () => {
     {
       header: "Location",
       className: "text-center",
-      render: (item) => item.location,
+      render: (item) => item.event.location,
     },
     {
-      header: "Date",
+      header: "Date Save",
       className: "text-center",
-      render: (item) => formatDateTime(item.datetime),
+      render: (item) => formatDateTime(item.CreatedAt),
+    },
+    {
+      header: "Date Upload",
+      className: "text-center",
+      render: (item) => formatDateTime(item.event.CreatedAt),
     },
     {
       header: "Action",
@@ -82,10 +91,10 @@ const DashboardEvent = () => {
       render: (item) => (
         <div className="flex justify-center gap-2">
           <Link
-            to={`/dashboard/event/edit/${item.ID}`}
-            className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
+            to={`/event/${item.event.ID}`}
+            className="cursor-pointer rounded bg-indigo-600 px-3 py-2 text-white"
           >
-            <Pencil />
+            <MoreVerticalIcon />
           </Link>
 
           <button
@@ -173,4 +182,4 @@ const DashboardEvent = () => {
   );
 };
 
-export default DashboardEvent;
+export default DashboardSaveEvent;

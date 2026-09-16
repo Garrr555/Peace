@@ -15,6 +15,19 @@ export interface EventType {
   private: boolean;
 }
 
+export interface BookingType {
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: null | string;
+  bookingCode: string;
+  phone: string;
+  userId: number;
+  user: UserType;
+  eventId: number;
+  event: EventType;
+}
+
 export interface UserType {
   ID: number;
   id: number;

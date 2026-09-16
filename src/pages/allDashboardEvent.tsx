@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState, type ChangeEvent } from "react";
 import CustomFetch from "../config/db";
@@ -9,6 +10,9 @@ import {
   TrashIcon,
   MoreVerticalIcon,
   DownloadIcon,
+  Bookmark,
+  LayoutGrid,
+  Table,
 } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import useDebounce from "../hooks/debounce";
@@ -16,12 +20,14 @@ import Pagination from "../components/pagination";
 import { toast } from "react-toastify";
 import { useAuthStore } from "../store/auth.store";
 import DataTable, { type TableColumn } from "../components/dataTable";
+import DataCard from "../components/dataCard";
 
 export default function AllDashboardEvent() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [totalPage, setTotalPage] = useState(1);
   const [totalEvent, setTotalEvent] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const { user } = useAuthStore();
   console.log(user);
 
@@ -87,28 +93,43 @@ export default function AllDashboardEvent() {
     }
   };
 
-const handleDownloadEvent = async (id: number) => {
-  try {
-    const response = await CustomFetch.get(`/event/${id}/download`, {
-      responseType: "blob",
-    });
+  const saveEvent = async (id: number) => {
+    try {
+      const response = await CustomFetch.post("/booking", {
+        phone: "1234567890",
+        eventId: id,
+      });
 
-    const url = window.URL.createObjectURL(response.data);
+      console.log(response.data);
+      toast.success("Gambar berhasil disimpan");
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Gagal menyimpan gambar");
+    }
+  };
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `event-${id}.png`;
+  const handleDownloadEvent = async (id: number) => {
+    try {
+      const response = await CustomFetch.get(`/event/${id}/download`, {
+        responseType: "blob",
+      });
 
-    document.body.appendChild(link);
-    link.click();
+      const url = window.URL.createObjectURL(response.data);
 
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.log(error);
-    toast.error("Gagal mendownload gambar event");
-  }
-};
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `event-${id}.png`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      toast.error("Gagal mendownload gambar event");
+    }
+  };
 
   useEffect(() => {
     setSearchParams({
@@ -165,10 +186,17 @@ const handleDownloadEvent = async (id: number) => {
         <div className="flex justify-center gap-2">
           <Link
             to={`/event/${item.ID}`}
-            className="cursor-pointer rounded bg-indigo-600 px-3 py-2 text-white"
+            className="cursor-pointer rounded bg-blue-600 px-3 py-2 text-white"
           >
             <MoreVerticalIcon />
           </Link>
+
+          <button
+            onClick={() => saveEvent(item.ID)}
+            className="cursor-pointer rounded bg-purple-600 px-3 py-2 text-white"
+          >
+            <Bookmark />
+          </button>
 
           <button
             onClick={() => handleDownloadEvent(item.ID)}
@@ -231,19 +259,28 @@ const handleDownloadEvent = async (id: number) => {
       </div>
 
       {/* Table */}
-      <DataTable
-        data={events}
-        columns={columns}
-        getRowKey={(item) => item.ID}
-        page={page}
-        limit={limit}
-        maxHeight="66vh"
-      />
+      {viewMode === "table" ? (
+        <DataTable
+          data={events}
+          columns={columns}
+          getRowKey={(item) => item.ID}
+          page={page}
+          limit={limit}
+          maxHeight="66vh"
+        />
+      ) : (
+        <DataCard
+          data={events}
+          columns={columns}
+          getRowKey={(item) => item.ID}
+          page={page}
+          limit={limit}
+          maxHeight="66vh"
+        />
+      )}
 
       {/* Pagination */}
       <div className="my-10 flex justify-between items-center gap-4">
-        <Pagination onPage={changePage} totalPage={totalPage} page={page} />
-
         <div className="flex items-center gap-2">
           <select
             value={limit}
@@ -255,6 +292,37 @@ const handleDownloadEvent = async (id: number) => {
             <option value={20}>20</option>
             <option value={50}>50</option>
           </select>
+        </div>
+
+        <Pagination onPage={changePage} totalPage={totalPage} page={page} />
+
+        {/* View Mode */}
+        <div className="flex items-center rounded-lg border border-gray-300 bg-white p-1">
+          <button
+            type="button"
+            onClick={() => setViewMode("table")}
+            className={`rounded-md p-2 transition ${
+              viewMode === "table"
+                ? "bg-indigo-600 text-white"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            title="Tampilan tabel"
+          >
+            <Table size={20} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setViewMode("card")}
+            className={`rounded-md p-2 transition ${
+              viewMode === "card"
+                ? "bg-indigo-600 text-white"
+                : "text-gray-500 hover:bg-gray-100"
+            }`}
+            title="Tampilan card"
+          >
+            <LayoutGrid size={20} />
+          </button>
         </div>
       </div>
     </>
