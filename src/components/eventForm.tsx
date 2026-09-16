@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import type { EventFormData } from "../types/type";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Lock, Unlock } from "lucide-react";
 
 interface EventFormProps {
   initialValue?: Partial<EventFormData>;
@@ -14,6 +14,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
   const [location, setLocation] = useState("");
   const [datetime, setDatetime] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [privat, setPrivat] = useState(false)
 
   const [perview, setPerview] = useState("");
 
@@ -28,6 +29,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
     data.append("description", description);
     data.append("location", location);
     data.append("datetime", dateTime.toISOString());
+    data.append("private", privat.toString());
 
     if (imageFile) {
       data.append("image", imageFile);
@@ -40,8 +42,9 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
     if (initialValue) {
       setName(initialValue.name!);
       setDescription(initialValue.description!);
-      setLocation(initialValue.description!);
+      setLocation(initialValue.location!);
       setDatetime(initialValue.datetime!);
+      setPrivat(initialValue.private!)
 
       if (initialValue.image) {
         setPerview(initialValue.image);
@@ -96,6 +99,38 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       ) : (
         <img src={perview} className="h-72 w-full rounded-lg object-contain" />
       )}
+      <div className="flex items-center justify-between rounded-lg border border-gray-300 p-4">
+        <div>
+          <p className="font-semibold">Private Event</p>
+          <p className="text-sm text-gray-500">
+            {privat
+              ? "Event hanya dapat diakses secara private"
+              : "Event dapat dilihat oleh semua orang"}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setPrivat((prev) => !prev)}
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-white ${
+            privat
+              ? "bg-red-600 hover:bg-red-700"
+              : "bg-green-600 hover:bg-green-700"
+          }`}
+        >
+          {privat ? (
+            <>
+              <Lock size={20} />
+              Private
+            </>
+          ) : (
+            <>
+              <Unlock size={20} />
+              Public
+            </>
+          )}
+        </button>
+      </div>
       <button
         className="rounded-lg w-full bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
         type="submit"

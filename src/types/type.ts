@@ -12,6 +12,7 @@ export interface EventType {
   user: UserType;
   datetime: string;
   listBooking: null;
+  private: boolean;
 }
 
 export interface UserType {
@@ -34,4 +35,5 @@ export interface EventFormData {
   image?: string;
   location?: string;
   datetime?: string;
+  private?: boolean;
 }
