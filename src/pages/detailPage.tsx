@@ -180,60 +180,62 @@ function DetailPage() {
   return (
     <section className="max-h-screen max-w-full lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex flex-col justify-between items-center gap-5">
       {eventData && (
-        <div className="min-w-1/2 p-6 bg-slate-50 rounded-3xl flex justify-between items-center gap-8">
-          {eventData.image && (
-            <img
-              src={eventData.image}
-              className="w-full h-96 object-contain"
-              alt={eventData.name}
-            />
-          )}
-          {eventData.file && (
-            <div className="mrounded-lg border border-gray-300 p-4">
-              <div className="mb-4 flex items-center gap-3">
-                <FileIcon className="size-8 shrink-0" />
+        <div className="min-w-1/2 p-6 bg-slate-50 rounded-3xl flex flex-col justify-center items-center gap-8">
+          <div className="flex items-center justify-between">
+            {eventData.image && (
+              <img
+                src={eventData.image}
+                className="w-full h-96 object-contain"
+                alt={eventData.name}
+              />
+            )}
+            {eventData.file && (
+              <div className="mrounded-lg border border-gray-300 p-4">
+                <div className="mb-4 flex items-center gap-3">
+                  <FileIcon className="size-8 shrink-0" />
 
-                <div className="min-w-0">
-                  <p className="font-semibold">Event File</p>
+                  <div className="min-w-0">
+                    <p className="font-semibold">Event File</p>
 
-                  <p className="truncate text-sm text-gray-500">
-                    {eventData.file.split("/").pop()?.split("?")[0] || "File"}
-                  </p>
+                    <p className="truncate text-sm text-gray-500">
+                      {eventData.file.split("/").pop()?.split("?")[0] || "File"}
+                    </p>
+                  </div>
                 </div>
+
+                {/* Preview PDF */}
+                {eventData.file.toLowerCase().includes(".pdf") && (
+                  <iframe
+                    src={eventData.file}
+                    className="h-96 w-full rounded-lg border"
+                    title="File Preview"
+                  />
+                )}
+
+                {/* Preview Image */}
+                {/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(
+                  eventData.file,
+                ) && (
+                  <img
+                    src={eventData.file}
+                    className="h-96 w-full rounded-lg object-contain"
+                    alt="File Preview"
+                  />
+                )}
+
+                {/* Tombol buka file */}
+                <a
+                  href={eventData.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+                >
+                  Buka File
+                </a>
               </div>
-
-              {/* Preview PDF */}
-              {eventData.file.toLowerCase().includes(".pdf") && (
-                <iframe
-                  src={eventData.file}
-                  className="h-96 w-full rounded-lg border"
-                  title="File Preview"
-                />
-              )}
-
-              {/* Preview Image */}
-              {/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(
-                eventData.file,
-              ) && (
-                <img
-                  src={eventData.file}
-                  className="h-96 w-full rounded-lg object-contain"
-                  alt="File Preview"
-                />
-              )}
-
-              {/* Tombol buka file */}
-              <a
-                href={eventData.file}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-block rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-              >
-                Buka File
-              </a>
-            </div>
-          )}
-          <div>
+            )}
+          </div>
+          <div className="w-full">
             <h1 className="mt-6 text-4xl font-bold">{eventData.name}</h1>
             <div className="mt-6 leading-8 text-start bg-slate-100 px-5 py-3 rounded-3xl min-h-40">
               {eventData.description}
@@ -262,6 +264,12 @@ function DetailPage() {
             </div>
             <div className="flex justify-between items-center w-full gap-5">
               <button
+                onClick={() => handleDownloadEvent(eventData.ID)}
+                className="mt-8 rounded-3xl w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
+              >
+                Download Image
+              </button>
+              <button
                 onClick={() => saveEvent(eventData.ID)}
                 className="mt-8 rounded-3xl w-full cursor-pointer bg-yellow-500 px-6 py-3 text-white hover:bg-blue-700"
               >
@@ -272,12 +280,6 @@ function DetailPage() {
                 className="mt-8 rounded-3xl w-full cursor-pointer bg-green-500 px-6 py-3 text-white hover:bg-blue-700"
               >
                 Download File
-              </button>
-              <button
-                onClick={() => handleDownloadEvent(eventData.ID)}
-                className="mt-8 rounded-3xl w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
-              >
-                Download Image
               </button>
             </div>
           </div>
