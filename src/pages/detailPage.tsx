@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import CustomFetch from "../config/db";
 import type { BookingType, EventType } from "../types/type";
-import { Calendar, LayoutGrid, MapPin, Table, UserIcon } from "lucide-react";
+import {
+  Bookmark,
+  Calendar,
+  LayoutGrid,
+  MapPin,
+  Table,
+  UserIcon,
+} from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
 import DataCard from "../components/dataCard";
@@ -147,9 +154,9 @@ function DetailPage() {
   }
 
   return (
-    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-between items-center">
+    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-between items-center gap-5">
       {eventData && (
-        <div className="max-w-5xl p-6 bg-slate-50">
+        <div className="min-w-1/2 p-6 bg-slate-50 rounded-3xl">
           <img
             src={eventData.image}
             className="w-full h-96 object-contain"
@@ -160,18 +167,26 @@ function DetailPage() {
             {eventData.description}
           </div>
           <div className="flex justify-between items-center">
-            <p className="mt-4 text-gray-500 flex gap-x-2">
-              <MapPin />
-              {eventData.location}
-            </p>
-            <p className="mt-4 text-gray-500 flex gap-x-2">
-              <Calendar />
-              {formatDateTime(eventData.CreatedAt)}
-            </p>
-            <p className="mt-4 text-gray-500 flex gap-x-2">
-              <UserIcon />
-              Posted by {eventData.user.name}
-            </p>
+            <div>
+              <p className="mt-4 text-gray-500 flex gap-x-2">
+                <MapPin />
+                {eventData.location}
+              </p>
+              <p className="mt-4 text-gray-500 flex gap-x-2">
+                <Calendar />
+                {formatDateTime(eventData.CreatedAt)}
+              </p>
+            </div>
+            <div>
+              <p className="mt-4 text-gray-500 flex gap-x-2">
+                <Bookmark />
+                {bookingData.length}
+              </p>
+              <p className="mt-4 text-gray-500 flex gap-x-2">
+                <UserIcon />
+                {eventData.user.name}
+              </p>
+            </div>
           </div>
           <div className="flex justify-between items-center w-full gap-5">
             <button
@@ -192,7 +207,7 @@ function DetailPage() {
 
       {user?.role === "admin" && (
         <div className="w-1/2">
-          <h1 className="font-bold text-2xl">Save by</h1>
+          <h1 className="font-bold text-2xl">Save by {bookingData.length} User</h1>
           {/* Table */}
           {viewMode === "table" ? (
             <DataTable

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
 import { Link } from "react-router";
-import { LayoutGrid, Pencil, PlusCircle, Table, TrashIcon } from "lucide-react";
+import { DownloadIcon, LayoutGrid, Pencil, PlusCircle, Table, TrashIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
 import type { TableColumn } from "../components/dataTable";
@@ -13,7 +13,7 @@ import DataCard from "../components/dataCard";
 const DashboardEvent = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
-  console.log(events)
+  console.log(events);
 
   const getEventByUser = async () => {
     const response = await CustomFetch.get("/events/user");
@@ -33,6 +33,29 @@ const DashboardEvent = () => {
     } catch (error) {
       console.log(error);
       toast.error("Gagal Menghapus Event");
+    }
+  };
+
+  const handleDownloadEvent = async (id: number) => {
+    try {
+      const response = await CustomFetch.get(`/event/${id}/download`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `event-${id}.png`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      toast.error("Gagal mendownload gambar event");
     }
   };
 
@@ -82,6 +105,12 @@ const DashboardEvent = () => {
       className: "text-center",
       render: (item) => (
         <div className="flex justify-center gap-2">
+          <button
+            onClick={() => handleDownloadEvent(item.ID)}
+            className="cursor-pointer rounded bg-green-600 px-3 py-2 text-white"
+          >
+            <DownloadIcon />
+          </button>
           <Link
             to={`/dashboard/event/edit/${item.ID}`}
             className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"

@@ -37,12 +37,12 @@ const DataTable = <T,>({
       <table className="min-w-full">
         <thead className="bg-slate-200">
           <tr>
-            <th className="px-4 py-3 text-center">No</th>
+            <th className="px-1 py-3 text-center">No</th>
 
             {columns.map((column, index) => (
               <th
                 key={index}
-                className={`px-4 py-3 ${column.className || "text-center"}`}
+                className={`px-1 py-3 ${column.className || "text-center"}`}
               >
                 {column.header}
               </th>
@@ -61,12 +61,12 @@ const DataTable = <T,>({
                   key={getRowKey(item, index)}
                   className="border-b hover:bg-slate-100"
                 >
-                  <td className="px-4 py-3 text-center">{rowNumber}</td>
+                  <td className="px-1 py-3 text-center">{rowNumber}</td>
 
                   {columns.map((column, columnIndex) => (
                     <td
                       key={columnIndex}
-                      className={`px-4 py-3 max-w-1 ${
+                      className={`px-1 py-3 max-w-1 ${
                         column.className?.includes("text-left")
                           ? ""
                           : "text-center"
