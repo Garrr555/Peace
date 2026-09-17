@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import CustomFetch from "../config/db";
 import type { EventType } from "../types/type";
 import { Link } from "react-router";
-import { DownloadIcon, LayoutGrid, Pencil, PlusCircle, Table, TrashIcon } from "lucide-react";
+import { LayoutGrid, MoreVerticalIcon, Pencil, PlusCircle, Table, TrashIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
 import type { TableColumn } from "../components/dataTable";
@@ -36,28 +36,28 @@ const DashboardEvent = () => {
     }
   };
 
-  const handleDownloadEvent = async (id: number) => {
-    try {
-      const response = await CustomFetch.get(`/event/${id}/download`, {
-        responseType: "blob",
-      });
+  // const handleDownloadEvent = async (id: number) => {
+  //   try {
+  //     const response = await CustomFetch.get(`/event/${id}/download`, {
+  //       responseType: "blob",
+  //     });
 
-      const url = window.URL.createObjectURL(response.data);
+  //     const url = window.URL.createObjectURL(response.data);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `event-${id}.png`;
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `event-${id}.png`;
 
-      document.body.appendChild(link);
-      link.click();
+  //     document.body.appendChild(link);
+  //     link.click();
 
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.log(error);
-      toast.error("Gagal mendownload gambar event");
-    }
-  };
+  //     link.remove();
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Gagal mendownload gambar event");
+  //   }
+  // };
 
   useEffect(() => {
     getEventByUser();
@@ -105,12 +105,18 @@ const DashboardEvent = () => {
       className: "text-center",
       render: (item) => (
         <div className="flex justify-center gap-2">
-          <button
+          <Link
+            to={`/event/${item.ID}`}
+            className="cursor-pointer rounded bg-blue-600 px-3 py-2 text-white"
+          >
+            <MoreVerticalIcon />
+          </Link>
+          {/* <button
             onClick={() => handleDownloadEvent(item.ID)}
             className="cursor-pointer rounded bg-green-600 px-3 py-2 text-white"
           >
             <DownloadIcon />
-          </button>
+          </button> */}
           <Link
             to={`/dashboard/event/edit/${item.ID}`}
             className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"

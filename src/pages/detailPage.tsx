@@ -7,6 +7,7 @@ import type { BookingType, EventType } from "../types/type";
 import {
   Bookmark,
   Calendar,
+  FileIcon,
   LayoutGrid,
   MapPin,
   Table,
@@ -28,7 +29,7 @@ function DetailPage() {
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const { user } = useAuthStore();
   console.log(user?.role);
-
+  console.log(eventData);
   console.log(bookingData);
 
   const fetchDetailEvent = async () => {
@@ -67,6 +68,29 @@ function DetailPage() {
     } catch (error) {
       console.log(error);
       toast.error("Gagal mendownload gambar event");
+    }
+  };
+
+  const handleDownloadFile = async (id: number) => {
+    try {
+      const response = await CustomFetch.get(`/event/${id}/download/file`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(response.data);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `event-${id}-file`;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log(error);
+      toast.error("Gagal mendownload File");
     }
   };
 
@@ -154,60 +178,117 @@ function DetailPage() {
   }
 
   return (
-    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-between items-center gap-5">
+    <section className="max-h-screen max-w-full lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex flex-col justify-between items-center gap-5">
       {eventData && (
-        <div className="min-w-1/2 p-6 bg-slate-50 rounded-3xl">
-          <img
-            src={eventData.image}
-            className="w-full h-96 object-contain"
-            alt={eventData.name}
-          />
-          <h1 className="mt-6 text-4xl font-bold">{eventData.name}</h1>
-          <div className="mt-6 leading-8 text-start bg-slate-100 px-5 py-3 rounded-3xl min-h-40">
-            {eventData.description}
-          </div>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="mt-4 text-gray-500 flex gap-x-2">
-                <MapPin />
-                {eventData.location}
-              </p>
-              <p className="mt-4 text-gray-500 flex gap-x-2">
-                <Calendar />
-                {formatDateTime(eventData.CreatedAt)}
-              </p>
+        <div className="min-w-1/2 p-6 bg-slate-50 rounded-3xl flex justify-between items-center gap-8">
+          {eventData.image && (
+            <img
+              src={eventData.image}
+              className="w-full h-96 object-contain"
+              alt={eventData.name}
+            />
+          )}
+          {eventData.file && (
+            <div className="mrounded-lg border border-gray-300 p-4">
+              <div className="mb-4 flex items-center gap-3">
+                <FileIcon className="size-8 shrink-0" />
+
+                <div className="min-w-0">
+                  <p className="font-semibold">Event File</p>
+
+                  <p className="truncate text-sm text-gray-500">
+                    {eventData.file.split("/").pop()?.split("?")[0] || "File"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Preview PDF */}
+              {eventData.file.toLowerCase().includes(".pdf") && (
+                <iframe
+                  src={eventData.file}
+                  className="h-96 w-full rounded-lg border"
+                  title="File Preview"
+                />
+              )}
+
+              {/* Preview Image */}
+              {/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(
+                eventData.file,
+              ) && (
+                <img
+                  src={eventData.file}
+                  className="h-96 w-full rounded-lg object-contain"
+                  alt="File Preview"
+                />
+              )}
+
+              {/* Tombol buka file */}
+              <a
+                href={eventData.file}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+              >
+                Buka File
+              </a>
             </div>
-            <div>
-              <p className="mt-4 text-gray-500 flex gap-x-2">
-                <Bookmark />
-                {bookingData.length}
-              </p>
-              <p className="mt-4 text-gray-500 flex gap-x-2">
-                <UserIcon />
-                {eventData.user.name}
-              </p>
+          )}
+          <div>
+            <h1 className="mt-6 text-4xl font-bold">{eventData.name}</h1>
+            <div className="mt-6 leading-8 text-start bg-slate-100 px-5 py-3 rounded-3xl min-h-40">
+              {eventData.description}
             </div>
-          </div>
-          <div className="flex justify-between items-center w-full gap-5">
-            <button
-              onClick={() => saveEvent(eventData.ID)}
-              className="mt-8 rounded-3xl w-full cursor-pointer bg-green-500 px-6 py-3 text-white hover:bg-blue-700"
-            >
-              Simpan Gambar
-            </button>
-            <button
-              onClick={() => handleDownloadEvent(eventData.ID)}
-              className="mt-8 rounded-3xl w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
-            >
-              Download Gambar
-            </button>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  <MapPin />
+                  {eventData.location}
+                </p>
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  <Calendar />
+                  {formatDateTime(eventData.CreatedAt)}
+                </p>
+              </div>
+              <div>
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  <Bookmark />
+                  {bookingData.length}
+                </p>
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  <UserIcon />
+                  {eventData.user.name}
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center w-full gap-5">
+              <button
+                onClick={() => saveEvent(eventData.ID)}
+                className="mt-8 rounded-3xl w-full cursor-pointer bg-yellow-500 px-6 py-3 text-white hover:bg-blue-700"
+              >
+                Save Image
+              </button>
+              <button
+                onClick={() => handleDownloadFile(eventData.ID)}
+                className="mt-8 rounded-3xl w-full cursor-pointer bg-green-500 px-6 py-3 text-white hover:bg-blue-700"
+              >
+                Download File
+              </button>
+              <button
+                onClick={() => handleDownloadEvent(eventData.ID)}
+                className="mt-8 rounded-3xl w-full cursor-pointer bg-blue-500 px-6 py-3 text-white hover:bg-blue-700"
+              >
+                Download Image
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {user?.role === "admin" && (
         <div className="w-1/2">
-          <h1 className="font-bold text-2xl">Save by {bookingData.length} User</h1>
+          <h1 className="font-bold text-2xl">
+            Save by {bookingData.length} User
+          </h1>
           {/* Table */}
           {viewMode === "table" ? (
             <DataTable

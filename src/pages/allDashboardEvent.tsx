@@ -9,7 +9,6 @@ import {
   Pencil,
   TrashIcon,
   MoreVerticalIcon,
-  DownloadIcon,
   Bookmark,
   LayoutGrid,
   Table,
@@ -108,28 +107,28 @@ export default function AllDashboardEvent() {
     }
   };
 
-  const handleDownloadEvent = async (id: number) => {
-    try {
-      const response = await CustomFetch.get(`/event/${id}/download`, {
-        responseType: "blob",
-      });
+  // const handleDownloadEvent = async (id: number) => {
+  //   try {
+  //     const response = await CustomFetch.get(`/event/${id}/download`, {
+  //       responseType: "blob",
+  //     });
 
-      const url = window.URL.createObjectURL(response.data);
+  //     const url = window.URL.createObjectURL(response.data);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `event-${id}.png`;
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `event-${id}.png`;
 
-      document.body.appendChild(link);
-      link.click();
+  //     document.body.appendChild(link);
+  //     link.click();
 
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.log(error);
-      toast.error("Gagal mendownload gambar event");
-    }
-  };
+  //     link.remove();
+  //     window.URL.revokeObjectURL(url);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error("Gagal mendownload gambar event");
+  //   }
+  // };
 
   useEffect(() => {
     setSearchParams({
@@ -198,12 +197,12 @@ export default function AllDashboardEvent() {
             <Bookmark />
           </button>
 
-          <button
+          {/* <button
             onClick={() => handleDownloadEvent(item.ID)}
             className="cursor-pointer rounded bg-green-600 px-3 py-2 text-white"
           >
             <DownloadIcon />
-          </button>
+          </button> */}
 
           <Link
             to={`/dashboard/event/edit/${item.ID}`}

@@ -13,6 +13,8 @@ export interface EventType {
   datetime: string;
   listBooking: null;
   private: boolean;
+  file: string;
+  fileId: string;
 }
 
 export interface BookingType {
@@ -49,4 +51,5 @@ export interface EventFormData {
   location?: string;
   datetime?: string;
   private?: boolean;
+  file?: string;
 }

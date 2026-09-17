@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import type { EventFormData } from "../types/type";
-import { ImageIcon, Lock, Unlock } from "lucide-react";
+import { FileIcon, ImageIcon, Lock, Unlock } from "lucide-react";
 
 interface EventFormProps {
   initialValue?: Partial<EventFormData>;
@@ -14,9 +14,12 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
   const [location, setLocation] = useState("");
   const [datetime, setDatetime] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [privat, setPrivat] = useState(false)
+  const [fileFile, setFileFile] = useState<File | null>(null);
+  const [privat, setPrivat] = useState(false);
 
   const [perview, setPerview] = useState("");
+  const [filePreview, setFilePreview] = useState("");
+  const [fileName, setFileName] = useState("");
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -35,6 +38,11 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       data.append("image", imageFile);
     }
 
+    // Upload file
+    if (fileFile) {
+      data.append("file", fileFile);
+    }
+
     onSubmit(data);
   };
 
@@ -44,10 +52,19 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       setDescription(initialValue.description!);
       setLocation(initialValue.location!);
       setDatetime(initialValue.datetime!);
-      setPrivat(initialValue.private!)
+      setPrivat(initialValue.private!);
 
       if (initialValue.image) {
         setPerview(initialValue.image);
+      }
+
+      if (initialValue.file) {
+        const url = initialValue.file;
+
+        const nameFromUrl = url.split("/").pop()?.split("?")[0];
+
+        setFileName(nameFromUrl || "File tersedia");
+        setFilePreview(url);
       }
     }
   }, [initialValue]);
@@ -98,6 +115,67 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
         </div>
       ) : (
         <img src={perview} className="h-72 w-full rounded-lg object-contain" />
+      )}
+      <div>
+        <p className="mb-2 font-semibold">Event File</p>
+
+        <input
+          type="file"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+
+            if (!file) return;
+
+            setFileFile(file);
+            setFileName(file.name);
+
+            // Buat preview untuk file yang baru dipilih
+            const previewUrl = URL.createObjectURL(file);
+            setFilePreview(previewUrl);
+          }}
+          className="w-full border border-gray-500/30 px-3 py-2"
+        />
+      </div>
+      {filePreview && (
+        <div className="rounded-lg border border-gray-300 p-4">
+          <div className="mb-3 flex items-center gap-3">
+            <FileIcon className="size-8" />
+
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">File</p>
+
+              <p className="truncate text-sm text-gray-500">{fileName}</p>
+            </div>
+          </div>
+
+          {/* Preview PDF */}
+          {fileName.toLowerCase().endsWith(".pdf") && (
+            <iframe
+              src={filePreview}
+              className="h-96 w-full rounded-lg border"
+              title="File Preview"
+            />
+          )}
+
+          {/* Preview image jika ternyata file berupa gambar */}
+          {fileFile?.type.startsWith("image/") && (
+            <img
+              src={filePreview}
+              className="h-72 w-full rounded-lg object-contain"
+              alt="File Preview"
+            />
+          )}
+
+          {/* Tombol buka file */}
+          <a
+            href={filePreview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          >
+            Buka File
+          </a>
+        </div>
       )}
       <div className="flex items-center justify-between rounded-lg border border-gray-300 p-4">
         <div>
