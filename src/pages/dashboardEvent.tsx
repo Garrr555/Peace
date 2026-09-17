@@ -13,6 +13,7 @@ import DataCard from "../components/dataCard";
 const DashboardEvent = () => {
   const [events, setEvents] = useState<EventType[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
+  console.log(events)
 
   const getEventByUser = async () => {
     const response = await CustomFetch.get("/events/user");
@@ -48,7 +49,7 @@ const DashboardEvent = () => {
           <img
             src={item.image}
             alt={item.name}
-            className="h-16 w-24 rounded-lg object-cover"
+            className="w-full rounded-lg object-cover"
           />
         </div>
       ),
@@ -135,7 +136,7 @@ const DashboardEvent = () => {
           data={events}
           columns={columns}
           getRowKey={(item) => item.ID}
-          maxHeight="66vh"
+          maxHeight="100vh"
         />
       )}
 

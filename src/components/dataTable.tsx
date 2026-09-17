@@ -66,7 +66,7 @@ const DataTable = <T,>({
                   {columns.map((column, columnIndex) => (
                     <td
                       key={columnIndex}
-                      className={`px-4 py-3 ${
+                      className={`px-4 py-3 max-w-1 ${
                         column.className?.includes("text-left")
                           ? ""
                           : "text-center"

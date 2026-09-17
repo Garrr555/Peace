@@ -151,7 +151,7 @@ export default function AllDashboardEvent() {
           <img
             src={item.image}
             alt={item.name}
-            className="h-16 w-24 rounded-lg object-cover"
+            className="w-full rounded-lg object-cover"
           />
         </div>
       ),
@@ -275,7 +275,7 @@ export default function AllDashboardEvent() {
           getRowKey={(item) => item.ID}
           page={page}
           limit={limit}
-          maxHeight="66vh"
+          maxHeight="100vh"
         />
       )}
 

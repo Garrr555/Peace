@@ -3,24 +3,33 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import CustomFetch from "../config/db";
-import type { EventType } from "../types/type";
-import { Calendar, MapPin, UserIcon } from "lucide-react";
+import type { BookingType, EventType } from "../types/type";
+import { Calendar, LayoutGrid, MapPin, Table, UserIcon } from "lucide-react";
 import formatDateTime from "../hooks/time";
 import { toast } from "react-toastify";
+import DataCard from "../components/dataCard";
+import type { TableColumn } from "../components/dataTable";
+import DataTable from "../components/dataTable";
+import { useAuthStore } from "../store/auth.store";
 
 function DetailPage() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [eventData, setEventData] = useState<EventType>();
+  const [bookingData, setBookingData] = useState<BookingType[]>([]);
+  const [viewMode, setViewMode] = useState<"table" | "card">("table");
+  const { user } = useAuthStore();
+  console.log(user?.role);
 
-  console.log(eventData);
+  console.log(bookingData);
 
   const fetchDetailEvent = async () => {
     setLoading(true);
     try {
       const response = await CustomFetch.get(`/events/${id}`);
       setEventData(response?.data?.event);
+      setBookingData(response?.data?.event?.listBooking);
     } catch (error: any) {
       console.log(error.status);
       if (error.status === 404) {
@@ -69,6 +78,32 @@ function DetailPage() {
     }
   };
 
+  const columns: TableColumn<BookingType>[] = [
+    {
+      header: "Name",
+      className: "text-left",
+      render: (item) => (
+        <div>
+          <p className="font-semibold">{item.user.name}</p>
+
+          <p className="line-clamp-2 text-sm text-gray-500">
+            {item.user.email.substring(0, 30)} ...
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: "Email",
+      className: "text-center",
+      render: (item) => item.user.email,
+    },
+    {
+      header: "Save Date",
+      className: "text-center",
+      render: (item) => formatDateTime(item.CreatedAt),
+    },
+  ];
+
   useEffect(() => {
     if (id) {
       fetchDetailEvent();
@@ -112,9 +147,9 @@ function DetailPage() {
   }
 
   return (
-    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-center items-center">
+    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8 rounded-3xl flex justify-between items-center">
       {eventData && (
-        <div className="mx-auto max-w-5xl p-6 bg-slate-50">
+        <div className="max-w-5xl p-6 bg-slate-50">
           <img
             src={eventData.image}
             className="w-full h-96 object-contain"
@@ -151,6 +186,59 @@ function DetailPage() {
             >
               Download Gambar
             </button>
+          </div>
+        </div>
+      )}
+
+      {user?.role === "admin" && (
+        <div className="w-1/2">
+          <h1 className="font-bold text-2xl">Save by</h1>
+          {/* Table */}
+          {viewMode === "table" ? (
+            <DataTable
+              data={bookingData}
+              columns={columns}
+              getRowKey={(item) => item.ID}
+              maxHeight="66vh"
+            />
+          ) : (
+            <DataCard
+              data={bookingData}
+              columns={columns}
+              getRowKey={(item) => item.ID}
+              maxHeight="66vh"
+            />
+          )}
+
+          {/* View Mode */}
+          <div className="my-10 flex justify-end items-center gap-4">
+            <div className="flex items-center rounded-lg border border-gray-300 bg-white p-1">
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`rounded-md p-2 transition ${
+                  viewMode === "table"
+                    ? "bg-indigo-600 text-white"
+                    : "text-gray-500 hover:bg-gray-100"
+                }`}
+                title="Tampilan tabel"
+              >
+                <Table size={20} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode("card")}
+                className={`rounded-md p-2 transition ${
+                  viewMode === "card"
+                    ? "bg-indigo-600 text-white"
+                    : "text-gray-500 hover:bg-gray-100"
+                }`}
+                title="Tampilan card"
+              >
+                <LayoutGrid size={20} />
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -52,7 +52,7 @@ const DashboardSaveEvent = () => {
           <img
             src={item?.event?.image}
             alt={item?.event?.name}
-            className="h-16 w-24 rounded-lg object-cover"
+            className="w-full rounded-lg object-cover"
           />
         </div>
       ),
@@ -144,7 +144,7 @@ const DashboardSaveEvent = () => {
           data={events}
           columns={columns}
           getRowKey={(item) => item.ID}
-          maxHeight="66vh"
+          maxHeight="100vh"
         />
       )}
 
