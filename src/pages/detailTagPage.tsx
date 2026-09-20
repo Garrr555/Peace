@@ -155,10 +155,10 @@ function DetailTagPage() {
   }
 
   return (
-    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-32 mx-auto px-8">
+    <section className="max-h-screen max-w-6xl lg:min-w-7xl my-10 mx-auto px-8">
       {tagData && (
         <div>
-          <h1 className="mt-6 text-4xl font-bold text-center">
+          <h1 className="text-4xl font-bold text-center">
             Tags {tagName?.name}
           </h1>
 
