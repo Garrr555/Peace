@@ -28,8 +28,7 @@ function DetailPage() {
   const [bookingData, setBookingData] = useState<BookingType[]>([]);
   const [viewMode, setViewMode] = useState<"table" | "card">("table");
   const { user } = useAuthStore();
-  console.log(user?.role);
-  console.log(eventData);
+  console.log(eventData?.tag?.name);
   console.log(bookingData);
 
   const fetchDetailEvent = async () => {
@@ -262,6 +261,14 @@ function DetailPage() {
                 </p>
               </div>
             </div>
+            {eventData.tag?.name && (
+              <div className="mt-3 flex items-center gap-3">
+                <div>Tag:</div>
+                <span className="inline-flex items-center rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-medium text-indigo-700">
+                  {eventData.tag.name}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between items-center w-full gap-5">
               <button
                 onClick={() => handleDownloadEvent(eventData.ID)}

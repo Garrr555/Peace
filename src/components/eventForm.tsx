@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import type { EventFormData } from "../types/type";
 import { FileIcon, ImageIcon, Lock, Unlock } from "lucide-react";
+import useTags from "../hooks/useTags";
 
 interface EventFormProps {
   initialValue?: Partial<EventFormData>;
@@ -16,10 +17,13 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [fileFile, setFileFile] = useState<File | null>(null);
   const [privat, setPrivat] = useState(false);
+  const [tagId, setTagId] = useState("");
 
   const [perview, setPerview] = useState("");
   const [filePreview, setFilePreview] = useState("");
   const [fileName, setFileName] = useState("");
+  const { tags } = useTags();
+  console.log(tags);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -43,6 +47,11 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       data.append("file", fileFile);
     }
 
+    //
+    if (tagId) {
+      data.append("tagId", tagId);
+    }
+
     onSubmit(data);
   };
 
@@ -53,6 +62,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       setLocation(initialValue.location!);
       setDatetime(initialValue.datetime!);
       setPrivat(initialValue.private!);
+      setTagId(initialValue.tagId?.toString() || "");
 
       if (initialValue.image) {
         setPerview(initialValue.image);
@@ -71,6 +81,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 rounded-xl p-6 shadow">
+      <p className="mb-2 font-semibold">Event Name</p>
       <input
         className="w-full rounded border border-gray-500/30 p-3"
         type="text"
@@ -78,6 +89,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
+      <p className="mb-2 font-semibold">Event Description</p>
       <textarea
         rows={5}
         className="w-full rounded border  border-gray-500/30 p-3"
@@ -85,6 +97,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       ></textarea>
+      <p className="mb-2 font-semibold">Event Location</p>
       <input
         className="w-full rounded border border-gray-500/30 p-3"
         type="text"
@@ -92,12 +105,14 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
         value={location}
         onChange={(e) => setLocation(e.target.value)}
       />
+      <p className="mb-2 font-semibold">Event Time</p>
       <input
         className="w-full rounded border border-gray-500/30 p-3"
         type="datetime-local"
         value={datetime}
         onChange={(e) => setDatetime(e.target.value)}
       />
+      <p className="mb-2 font-semibold">Event Thumbnile</p>
       <input
         type="file"
         accept="image/*"
@@ -107,7 +122,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
           setImageFile(file);
           setPerview(URL.createObjectURL(file));
         }}
-        className="mt-5 w-full border px-3 py-2 border-gray-500/30"
+        className="w-full border px-3 py-2 border-gray-500/30"
       />
       {!perview ? (
         <div className="bg-slate-200 flex flex-col items-center justify-center rounded-xl py-5">
@@ -136,7 +151,11 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
           className="w-full border border-gray-500/30 px-3 py-2"
         />
       </div>
-      {filePreview && (
+      {!filePreview ? (
+        <div className="bg-slate-200 flex flex-col items-center justify-center rounded-xl py-5">
+          <FileIcon className="size-32" /> No File
+        </div>
+      ) : (
         <div className="rounded-lg border border-gray-300 p-4">
           <div className="mb-3 flex items-center gap-3">
             <FileIcon className="size-8" />
@@ -152,7 +171,7 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
           {fileName.toLowerCase().endsWith(".pdf") && (
             <iframe
               src={filePreview}
-              className="h-96 w-full rounded-lg border"
+              className="h-[80vh] w-full rounded-lg border"
               title="File Preview"
             />
           )}
@@ -177,6 +196,29 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
           </a>
         </div>
       )}
+      {/* Tag */}{" "}
+      <div>
+        {" "}
+        <label htmlFor="tag" className="mb-2 block font-semibold">
+          {" "}
+          Event Tag{" "}
+        </label>{" "}
+        <select
+          id="tag"
+          value={tagId}
+          onChange={(e) => setTagId(e.target.value)}
+          className="w-full rounded border border-gray-500/30 bg-white p-3"
+        >
+          {" "}
+          <option value="">Tanpa Tag</option>{" "}
+          {tags.map((tag) => (
+            <option key={tag.ID} value={tag.ID}>
+              {" "}
+              {tag.name}{" "}
+            </option>
+          ))}{" "}
+        </select>{" "}
+      </div>
       <div className="flex items-center justify-between rounded-lg border border-gray-300 p-4">
         <div>
           <p className="font-semibold">Private Event</p>

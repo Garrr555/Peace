@@ -16,6 +16,11 @@ const menus = [
     adminOnly: true,
   },
   {
+    name: "Tags",
+    path: "/dashboard/tags",
+    adminOnly: true,
+  },
+  {
     name: "My Event",
     path: "/dashboard/event",
   },

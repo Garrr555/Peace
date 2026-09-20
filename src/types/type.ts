@@ -15,6 +15,8 @@ export interface EventType {
   private: boolean;
   file: string;
   fileId: string;
+  tagId: number | null;
+  tag: TagType | null;
 }
 
 export interface BookingType {
@@ -52,4 +54,17 @@ export interface EventFormData {
   datetime?: string;
   private?: boolean;
   file?: string;
+  tagId: number | null;
+}
+
+export interface TagType {
+  ID: number;
+
+  CreatedAt: string;
+
+  UpdatedAt: string;
+
+  DeletedAt: null | string;
+
+  name: string;
 }

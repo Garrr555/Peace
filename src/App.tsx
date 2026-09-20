@@ -17,6 +17,9 @@ import DashboardUsers from "./pages/dashboardUsers";
 import AdminRoute from "./guard/AdminRoute";
 import DetailUserPage from "./pages/detailUserPage";
 import DashboardSaveEvent from "./pages/dashboardSaveEvent";
+import DashboardTags from "./pages/dashboardTags";
+import DetailTagPage from "./pages/detailTagPage";
+import CreateTag from "./pages/dashboard/createTag";
 
 const App = () => {
   return (
@@ -38,15 +41,18 @@ const App = () => {
             {/* Admin Only */}{" "}
             <Route element={<AdminRoute />}>
               <Route path="users" element={<DashboardUsers />} />
+              <Route path="tags" element={<DashboardTags />} />
             </Route>
             <Route path="event" element={<DashboardEvent />} />
             <Route path="all" element={<AllDashboardEvent />} />
             <Route path="save" element={<DashboardSaveEvent />} />
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="event/edit/:id" element={<UpdateEvent />} />
+            <Route path="tag/create" element={<CreateTag />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/user/:id" element={<DetailUserPage />} />
+            <Route path="/tag/:id" element={<DetailTagPage />} />
           </Route>
           <Route path="/event/:id" element={<DetailPage />} />
         </Route>

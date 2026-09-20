@@ -55,7 +55,8 @@ const UpdateEvent = () => {
             datetime: event.datetime.substring(0, 16),
             image: event.image,
             private: event.private,
-            file: event.file
+            file: event.file,
+            tagId: event.tagId,
           }}
         />
       )}
