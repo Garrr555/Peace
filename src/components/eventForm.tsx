@@ -12,6 +12,9 @@ interface EventFormProps {
 const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [type, setType] = useState("");
+  const [price, setPrice] = useState(0);
+  const [count, setCount] = useState(0);
   const [location, setLocation] = useState("");
   const [datetime, setDatetime] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -37,6 +40,9 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
     data.append("location", location);
     data.append("datetime", dateTime.toISOString());
     data.append("private", privat.toString());
+    data.append("type", type);
+    data.append("price", price.toString());
+    data.append("count", count.toString());
 
     if (imageFile) {
       data.append("image", imageFile);
@@ -63,6 +69,9 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
       setDatetime(initialValue.datetime!);
       setPrivat(initialValue.private!);
       setTagId(initialValue.tagId?.toString() || "");
+      setType(initialValue.type!)
+      setCount(initialValue.count!)
+      setPrice(initialValue.price!)
 
       if (initialValue.image) {
         setPerview(initialValue.image);
@@ -219,6 +228,30 @@ const EventForm = ({ onSubmit, initialValue }: EventFormProps) => {
           ))}{" "}
         </select>{" "}
       </div>
+      <p className="mb-2 font-semibold">Event Type (Opsional)</p>
+      <input
+        className="w-full rounded border border-gray-500/30 p-3"
+        type="text"
+        placeholder="Type"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+      />
+      <p className="mb-2 font-semibold">Event Count (Opsional)</p>
+      <input
+        className="w-full rounded border border-gray-500/30 p-3"
+        type="number"
+        placeholder="Count"
+        value={count}
+        onChange={(e) => setCount(Number(e.target.value))}
+      />
+      <p className="mb-2 font-semibold">Event Price (Opsional)</p>
+      <input
+        className="w-full rounded border border-gray-500/30 p-3"
+        type="number"
+        placeholder="Price"
+        value={price}
+        onChange={(e) => setPrice(Number(e.target.value))}
+      />
       <div className="flex items-center justify-between rounded-lg border border-gray-300 p-4">
         <div>
           <p className="font-semibold">Private Event</p>

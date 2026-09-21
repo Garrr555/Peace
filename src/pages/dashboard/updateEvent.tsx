@@ -57,6 +57,9 @@ const UpdateEvent = () => {
             private: event.private,
             file: event.file,
             tagId: event.tagId,
+            type: event.type,
+            count: event.count,
+            price:event.price
           }}
         />
       )}

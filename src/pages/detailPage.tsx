@@ -19,6 +19,7 @@ import DataCard from "../components/dataCard";
 import type { TableColumn } from "../components/dataTable";
 import DataTable from "../components/dataTable";
 import { useAuthStore } from "../store/auth.store";
+import { formatPrice } from "../hooks/price";
 
 function DetailPage() {
   const { id } = useParams();
@@ -261,14 +262,31 @@ function DetailPage() {
                 </p>
               </div>
             </div>
-            {eventData.tag?.name && (
-              <div className="mt-3 flex items-center gap-3">
-                <div>Tag:</div>
-                <span className="inline-flex items-center rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-medium text-indigo-700">
-                  {eventData.tag.name}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center justify-between">
+              {eventData.tag?.name && (
+                <div className="mt-3 flex items-center gap-3">
+                  <div>Tag:</div>
+                  <span className="inline-flex items-center rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-medium text-indigo-700">
+                    {eventData.tag.name}
+                  </span>
+                </div>
+              )}
+              {eventData?.count && (
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  Count: {eventData.count}
+                </p>
+              )}
+              {eventData?.price && (
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  Price: {formatPrice(eventData?.price)}
+                </p>
+              )}
+              {eventData?.type && (
+                <p className="mt-4 text-gray-500 flex gap-x-2">
+                  Type: {eventData.type}
+                </p>
+              )}
+            </div>
             <div className="flex justify-between items-center w-full gap-5">
               <button
                 onClick={() => handleDownloadEvent(eventData.ID)}

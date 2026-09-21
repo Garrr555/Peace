@@ -17,6 +17,9 @@ export interface EventType {
   fileId: string;
   tagId: number | null;
   tag: TagType | null;
+  type: string | null;
+  count: number | null;
+  price: number | null;
 }
 
 export interface BookingType {
@@ -55,6 +58,9 @@ export interface EventFormData {
   private?: boolean;
   file?: string;
   tagId: number | null;
+  type: string | null;
+  count: number | null;
+  price: number | null;
 }
 
 export interface TagType {
