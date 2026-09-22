@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router";
 const PublicRoute = () => {
   const token = Cookies.get("token");
   if (token) {
-    return <Navigate to={"/dasboard"} replace />;
+    return <Navigate to={"/dashboard"} replace />;
   }
   return <Outlet />;
 };
