@@ -47,6 +47,7 @@ export interface UserType {
   role: string;
   Events: null;
   image: string;
+  platform: string;
 }
 
 export interface EventFormData {
