@@ -21,6 +21,11 @@ const menus = [
     adminOnly: true,
   },
   {
+    name: "Divisi",
+    path: "/dashboard/divisis",
+    adminOnly: true,
+  },
+  {
     name: "My Event",
     path: "/dashboard/event",
   },

@@ -20,6 +20,10 @@ import DashboardSaveEvent from "./pages/dashboardSaveEvent";
 import DashboardTags from "./pages/dashboardTags";
 import DetailTagPage from "./pages/detailTagPage";
 import CreateTag from "./pages/dashboard/createTag";
+import UpdateUser from "./pages/dashboard/updateUser";
+import DashboardDivisi from "./pages/dashboardDivisi";
+import DetailDivisiPage from "./pages/detailDivisiPage";
+import CreateDivisi from "./pages/dashboard/createDivisi";
 
 const App = () => {
   return (
@@ -38,10 +42,12 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DasboardLayout />}>
             <Route index element={<DashboardView />} />
-            {/* Admin Only */}{" "}
+            {/* Admin Only */}
             <Route element={<AdminRoute />}>
               <Route path="users" element={<DashboardUsers />} />
+              <Route path="divisis" element={<DashboardDivisi />} />
               <Route path="tags" element={<DashboardTags />} />
+              <Route path="users/edit/:id" element={<UpdateUser />} />
             </Route>
             <Route path="event" element={<DashboardEvent />} />
             <Route path="all" element={<AllDashboardEvent />} />
@@ -49,9 +55,11 @@ const App = () => {
             <Route path="event/create" element={<CreateEvent />} />
             <Route path="event/edit/:id" element={<UpdateEvent />} />
             <Route path="tag/create" element={<CreateTag />} />
+            <Route path="divisi/create" element={<CreateDivisi />} />
           </Route>
           <Route element={<AdminRoute />}>
             <Route path="/user/:id" element={<DetailUserPage />} />
+            <Route path="/divisi/:id" element={<DetailDivisiPage />} />
             <Route path="/tag/:id" element={<DetailTagPage />} />
           </Route>
           <Route path="/event/:id" element={<DetailPage />} />

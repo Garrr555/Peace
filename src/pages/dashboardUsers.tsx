@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from "react";
 import DataTable, { type TableColumn } from "../components/dataTable";
@@ -5,7 +6,7 @@ import CustomFetch from "../config/db";
 import type { UserType } from "../types/type";
 import formatDateTime from "../hooks/time";
 import { Link } from "react-router";
-import { MoreVerticalIcon, Trash } from "lucide-react";
+import { MoreVerticalIcon, Pencil, Trash } from "lucide-react";
 import { toast } from "react-toastify";
 
 const DashboardUsers = () => {
@@ -74,6 +75,12 @@ const DashboardUsers = () => {
       className: "text-center",
       render: (item) => (
         <div className="flex justify-center gap-2">
+          <Link
+            to={`/dashboard/users/edit/${item.ID}`}
+            className="cursor-pointer rounded bg-yellow-500 px-3 py-2 text-white"
+          >
+            <Pencil />
+          </Link>
           <Link
             to={`/user/${item.ID}`}
             className="cursor-pointer rounded bg-indigo-600 px-3 py-2 text-white"

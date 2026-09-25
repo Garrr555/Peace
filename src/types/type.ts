@@ -48,6 +48,22 @@ export interface UserType {
   Events: null;
   image: string;
   platform: string;
+  department: string;
+  salary: number;
+
+  divisiId: number | null;
+  divisi: DivisiType | null;
+}
+
+export interface DivisiType {
+  ID: number;
+  id: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: null | string;
+
+  divisi: string;
+  users: UserType[];
 }
 
 export interface EventFormData {
@@ -59,9 +75,15 @@ export interface EventFormData {
   private?: boolean;
   file?: string;
   tagId: number | null;
+  divisiId: number | null;
   type: string | null;
   count: number | null;
   price: number | null;
+  email?: string | null;
+  platform?: string | null
+  role?: string | null;
+  department?: string | null;
+  salary: number | null;
 }
 
 export interface TagType {
